@@ -60,7 +60,8 @@ export class ShareService {
             throw new NotFoundException('Share link not found or has been revoked');
         }
 
-        const items = await this.listsService.findAllItems(share.listId.toString(), share.listId['userId'].toString());
+        const list: any = share.listId;
+        const items = await this.listsService.findAllItems(list._id.toString(), list.userId.toString());
 
         return {
             list: share.listId,
@@ -94,10 +95,10 @@ export class ShareService {
             throw new NotFoundException('Share link not found or has been revoked');
         }
 
-        const list = share.listId;
-        const userId = list['userId'].toString();
+        const list: any = share.listId;
+        const userId = list.userId.toString();
 
-        return this.listsService.updateList(list['_id'].toString(), userId, updateListDto);
+        return this.listsService.updateList(list._id.toString(), userId, updateListDto);
     }
 
     async updateItemStatusViaShare(shareToken: string, itemId: string, updateItemDto: UpdateListItemDto) {
@@ -107,9 +108,9 @@ export class ShareService {
             throw new NotFoundException('Share link not found or has been revoked');
         }
 
-        const list = share.listId;
-        const userId = list['userId'].toString();
-        const listId = list['_id'].toString();
+        const list: any = share.listId;
+        const userId = list.userId.toString();
+        const listId = list._id.toString();
 
         return this.listsService.updateListItem(listId, itemId, userId, updateItemDto);
     }

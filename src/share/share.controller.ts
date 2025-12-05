@@ -1,9 +1,9 @@
 import { Controller, Get, Post, Body, Param, Request, UseGuards, Patch } from '@nestjs/common';
 import { ShareService } from './share.service';
-import { JwtAuthGuard } from 'auth/guards/jwt-auth.guard';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CreateShareDto } from './dto/share.dto';
-import { UpdateListDto } from 'lists/dto/list.dto';
-import { UpdateListItemDto } from 'lists/dto/list-item.dto';
+import { UpdateListDto } from '../lists/dto/list.dto';
+import { UpdateListItemDto } from '../lists/dto/list-item.dto';
 
 @Controller()
 export class ShareController {
