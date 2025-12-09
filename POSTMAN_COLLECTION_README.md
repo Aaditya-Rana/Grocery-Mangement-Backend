@@ -123,7 +123,3 @@ For different environments (dev, staging, production), create Postman environmen
 - Shopkeeper endpoints (under "Sharing - Public") do not require authentication
 - The collection automatically extracts and stores IDs from responses for use in subsequent requests
 - Test scripts validate all responses automatically
-
-## Support
-
-For issues or questions, refer to the API documentation or contact the backend team.
