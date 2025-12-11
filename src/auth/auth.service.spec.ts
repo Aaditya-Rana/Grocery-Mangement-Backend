@@ -4,36 +4,36 @@ import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 
 const mockUsersService = {
-    findOne: jest.fn(),
-    create: jest.fn(),
+  findOne: jest.fn(),
+  create: jest.fn(),
 };
 
 const mockJwtService = {
-    sign: jest.fn(),
+  sign: jest.fn(),
 };
 
 describe('AuthService', () => {
-    let service: AuthService;
+  let service: AuthService;
 
-    beforeEach(async () => {
-        const module: TestingModule = await Test.createTestingModule({
-            providers: [
-                AuthService,
-                {
-                    provide: UsersService,
-                    useValue: mockUsersService,
-                },
-                {
-                    provide: JwtService,
-                    useValue: mockJwtService,
-                },
-            ],
-        }).compile();
+  beforeEach(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [
+        AuthService,
+        {
+          provide: UsersService,
+          useValue: mockUsersService,
+        },
+        {
+          provide: JwtService,
+          useValue: mockJwtService,
+        },
+      ],
+    }).compile();
 
-        service = module.get<AuthService>(AuthService);
-    });
+    service = module.get<AuthService>(AuthService);
+  });
 
-    it('should be defined', () => {
-        expect(service).toBeDefined();
-    });
+  it('should be defined', () => {
+    expect(service).toBeDefined();
+  });
 });

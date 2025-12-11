@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException, ForbiddenException, Inject, forwardRef } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  Inject,
+  forwardRef,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { Share, ShareDocument, ShareStatus } from './schemas/share.schema';
@@ -11,111 +16,164 @@ import * as crypto from 'crypto';
 
 @Injectable()
 export class ShareService {
-    constructor(
-        @InjectModel(Share.name) private shareModel: Model<ShareDocument>,
-        private listsService: ListsService,
-        @Inject(forwardRef(() => EventsGateway)) private eventsGateway: EventsGateway,
-    ) { }
+  constructor(
+    @InjectModel(Share.name) private shareModel: Model<ShareDocument>,
+    private listsService: ListsService,
+    @Inject(forwardRef(() => EventsGateway))
+    private eventsGateway: EventsGateway,
+  ) {}
 
-    async createShare(listId: string, userId: string, createShareDto: CreateShareDto): Promise<Share> {
-        // Verify list ownership
-        await this.listsService.findListById(listId, userId);
+  async createShare(
+    listId: string,
+    userId: string,
+    createShareDto: CreateShareDto,
+  ): Promise<Share> {
+    // Verify list ownership
+    await this.listsService.findListById(listId, userId);
 
-        // Revoke any existing active shares for this list
-        await this.shareModel.updateMany(
-            { listId: new Types.ObjectId(listId), status: ShareStatus.ACTIVE },
-            { status: ShareStatus.REVOKED },
-        );
+    // Revoke any existing active shares for this list
+    await this.shareModel.updateMany(
+      { listId: new Types.ObjectId(listId), status: ShareStatus.ACTIVE },
+      { status: ShareStatus.REVOKED },
+    );
 
-        // Generate unique share token
-        const shareToken = crypto.randomBytes(16).toString('hex');
+    // Generate unique share token
+    const shareToken = crypto.randomBytes(16).toString('hex');
 
-        const share = new this.shareModel({
-            listId: new Types.ObjectId(listId),
-            shareToken,
-            shopkeeperName: createShareDto.shopkeeperName,
-        });
+    const share = new this.shareModel({
+      listId: new Types.ObjectId(listId),
+      shareToken,
+      shopkeeperName: createShareDto.shopkeeperName,
+    });
 
-        return share.save();
+    return share.save();
+  }
+
+  async revokeShare(listId: string, userId: string): Promise<void> {
+    // Verify list ownership
+    await this.listsService.findListById(listId, userId);
+
+    await this.shareModel.updateMany(
+      { listId: new Types.ObjectId(listId), status: ShareStatus.ACTIVE },
+      { status: ShareStatus.REVOKED },
+    );
+
+    // Emit real-time event
+    this.eventsGateway.emitShareRevoked(listId, {
+      message: 'Share link has been revoked',
+    });
+  }
+
+  async getListByShareToken(shareToken: string) {
+    const share = await this.shareModel
+      .findOne({ shareToken, status: ShareStatus.ACTIVE })
+      .populate('listId')
+      .exec();
+
+    if (!share) {
+      throw new NotFoundException('Share link not found or has been revoked');
     }
 
-    async revokeShare(listId: string, userId: string): Promise<void> {
-        // Verify list ownership
-        await this.listsService.findListById(listId, userId);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const list = share.listId as any;
+    const items = await this.listsService.findAllItems(
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      String(list._id),
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      String(list.userId),
+    );
 
-        await this.shareModel.updateMany(
-            { listId: new Types.ObjectId(listId), status: ShareStatus.ACTIVE },
-            { status: ShareStatus.REVOKED },
-        );
+    return {
+      list: share.listId,
+      items,
+      share: {
+        shareToken: share.shareToken,
+        shopkeeperName: share.shopkeeperName,
+      },
+    };
+  }
 
-        // Emit real-time event
-        this.eventsGateway.emitShareRevoked(listId, { message: 'Share link has been revoked' });
+  async acceptShare(
+    shareToken: string,
+    shopkeeperName?: string,
+  ): Promise<Share> {
+    const share = await this.shareModel
+      .findOne({ shareToken, status: ShareStatus.ACTIVE })
+      .exec();
+
+    if (!share) {
+      throw new NotFoundException('Share link not found or has been revoked');
     }
 
-
-    async getListByShareToken(shareToken: string) {
-        const share = await this.shareModel.findOne({ shareToken, status: ShareStatus.ACTIVE }).populate('listId').exec();
-
-        if (!share) {
-            throw new NotFoundException('Share link not found or has been revoked');
-        }
-
-        const list: any = share.listId;
-        const items = await this.listsService.findAllItems(list._id.toString(), list.userId.toString());
-
-        return {
-            list: share.listId,
-            items,
-            share: {
-                shareToken: share.shareToken,
-                shopkeeperName: share.shopkeeperName,
-            },
-        };
+    if (shopkeeperName) {
+      share.shopkeeperName = shopkeeperName;
+      await share.save();
     }
 
-    async acceptShare(shareToken: string, shopkeeperName?: string): Promise<Share> {
-        const share = await this.shareModel.findOne({ shareToken, status: ShareStatus.ACTIVE }).exec();
+    return share;
+  }
 
-        if (!share) {
-            throw new NotFoundException('Share link not found or has been revoked');
-        }
+  async updateListStatusViaShare(
+    shareToken: string,
+    updateListDto: UpdateListDto,
+  ) {
+    const share = await this.shareModel
+      .findOne({ shareToken, status: ShareStatus.ACTIVE })
+      .populate('listId')
+      .exec();
 
-        if (shopkeeperName) {
-            share.shopkeeperName = shopkeeperName;
-            await share.save();
-        }
-
-        return share;
+    if (!share) {
+      throw new NotFoundException('Share link not found or has been revoked');
     }
 
-    async updateListStatusViaShare(shareToken: string, updateListDto: UpdateListDto) {
-        const share = await this.shareModel.findOne({ shareToken, status: ShareStatus.ACTIVE }).populate('listId').exec();
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const list = share.listId as any;
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    const userId = String(list.userId);
 
-        if (!share) {
-            throw new NotFoundException('Share link not found or has been revoked');
-        }
+    return this.listsService.updateList(
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      String(list._id),
+      userId,
+      updateListDto,
+    );
+  }
 
-        const list: any = share.listId;
-        const userId = list.userId.toString();
+  async updateItemStatusViaShare(
+    shareToken: string,
+    itemId: string,
+    updateItemDto: UpdateListItemDto,
+  ) {
+    const share = await this.shareModel
+      .findOne({ shareToken, status: ShareStatus.ACTIVE })
+      .populate('listId')
+      .exec();
 
-        return this.listsService.updateList(list._id.toString(), userId, updateListDto);
+    if (!share) {
+      throw new NotFoundException('Share link not found or has been revoked');
     }
 
-    async updateItemStatusViaShare(shareToken: string, itemId: string, updateItemDto: UpdateListItemDto) {
-        const share = await this.shareModel.findOne({ shareToken, status: ShareStatus.ACTIVE }).populate('listId').exec();
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const list = share.listId as any;
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    const userId = String(list.userId);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    const listId = String(list._id);
 
-        if (!share) {
-            throw new NotFoundException('Share link not found or has been revoked');
-        }
+    return this.listsService.updateListItem(
+      listId,
+      itemId,
+      userId,
+      updateItemDto,
+    );
+  }
 
-        const list: any = share.listId;
-        const userId = list.userId.toString();
-        const listId = list._id.toString();
-
-        return this.listsService.updateListItem(listId, itemId, userId, updateItemDto);
-    }
-
-    async findShareByListId(listId: string): Promise<Share | null> {
-        return this.shareModel.findOne({ listId: new Types.ObjectId(listId), status: ShareStatus.ACTIVE }).exec();
-    }
+  async findShareByListId(listId: string): Promise<Share | null> {
+    return this.shareModel
+      .findOne({
+        listId: new Types.ObjectId(listId),
+        status: ShareStatus.ACTIVE,
+      })
+      .exec();
+  }
 }

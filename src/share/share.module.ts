@@ -8,14 +8,14 @@ import { EventsModule } from '../events/events.module';
 import { AuthModule } from '../auth/auth.module';
 
 @Module({
-    imports: [
-        MongooseModule.forFeature([{ name: Share.name, schema: ShareSchema }]),
-        ListsModule,
-        EventsModule,
-        AuthModule,
-    ],
-    controllers: [ShareController],
-    providers: [ShareService],
-    exports: [ShareService],
+  imports: [
+    MongooseModule.forFeature([{ name: Share.name, schema: ShareSchema }]),
+    ListsModule,
+    EventsModule,
+    AuthModule,
+  ],
+  controllers: [ShareController],
+  providers: [ShareService],
+  exports: [ShareService],
 })
-export class ShareModule { }
+export class ShareModule {}
