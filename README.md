@@ -1,98 +1,251 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Grocery Management Backend
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+A robust NestJS-based backend API for managing grocery lists with real-time collaboration features, user authentication, and link-based sharing capabilities.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## 🚀 Features
 
-## Description
+- **User Authentication**: Secure JWT-based authentication with bcrypt password hashing
+- **Grocery List Management**: Create, read, update, and delete grocery lists and items
+- **Real-time Updates**: WebSocket integration for live collaboration
+- **Link Sharing**: Share grocery lists via secure, revocable links
+- **Role-based Access**: Owner and viewer permissions for shared lists
+- **RESTful API**: Well-structured endpoints following REST principles
+- **Comprehensive Testing**: Unit tests and E2E tests with Jest
+- **CORS Enabled**: Cross-origin resource sharing for frontend integration
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## 📋 Prerequisites
 
-## Project setup
+Before you begin, ensure you have the following installed:
 
+- **Node.js** (v18 or higher)
+- **npm** (v9 or higher)
+- **MongoDB** (v6 or higher) - Running locally or accessible remotely
+
+## 🛠️ Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/Aaditya-Rana/Grocery-Mangement-Backend.git
+   cd Grocery-Mangement-Backend
+   ```
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Configure environment variables**
+   
+   Create a `.env` file in the root directory:
+   ```env
+   # MongoDB Configuration
+   MONGODB_URI=mongodb://localhost:27017/grocery-management
+   
+   # JWT Configuration
+   JWT_SECRET=your-super-secret-jwt-key-change-this-in-production
+   JWT_EXPIRATION=7d
+   
+   # Server Configuration
+   PORT=3000
+   ```
+
+   > **⚠️ Important**: Replace `JWT_SECRET` with a strong, random secret key in production.
+
+## 🏃 Running the Application
+
+### Development Mode (with hot-reload)
 ```bash
-$ npm install
+npm run start:dev
 ```
 
-## Compile and run the project
-
+### Production Mode
 ```bash
-# development
-$ npm run start
+# Build the application
+npm run build
 
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+# Start the production server
+npm run start:prod
 ```
 
-## Run tests
-
+### Debug Mode
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+npm run start:debug
 ```
 
-## Deployment
+The server will start on `http://localhost:3000` (or the port specified in your `.env` file).
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+## 🧪 Testing
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
+### Run Unit Tests
 ```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+npm run test
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+### Run E2E Tests
+```bash
+npm run test:e2e
+```
 
-## Resources
+### Run Tests with Coverage
+```bash
+npm run test:cov
+```
 
-Check out a few resources that may come in handy when working with NestJS:
+### Run Tests in Watch Mode
+```bash
+npm run test:watch
+```
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+## 📚 API Documentation
 
-## Support
+### Authentication Endpoints
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+| Method | Endpoint | Description | Auth Required |
+|--------|----------|-------------|---------------|
+| POST | `/auth/register` | Register a new user | No |
+| POST | `/auth/login` | Login and get JWT token | No |
 
-## Stay in touch
+### User Endpoints
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+| Method | Endpoint | Description | Auth Required |
+|--------|----------|-------------|---------------|
+| GET | `/users/profile` | Get current user profile | Yes |
 
-## License
+### Grocery List Endpoints
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+| Method | Endpoint | Description | Auth Required |
+|--------|----------|-------------|---------------|
+| POST | `/lists` | Create a new grocery list | Yes |
+| GET | `/lists` | Get all user's grocery lists | Yes |
+| GET | `/lists/:id` | Get a specific grocery list | Yes |
+| PATCH | `/lists/:id` | Update a grocery list | Yes |
+| DELETE | `/lists/:id` | Delete a grocery list | Yes |
+| POST | `/lists/:id/items` | Add item to a list | Yes |
+| PATCH | `/lists/:id/items/:itemId` | Update a list item | Yes |
+| DELETE | `/lists/:id/items/:itemId` | Remove item from a list | Yes |
+
+### Share Endpoints
+
+| Method | Endpoint | Description | Auth Required |
+|--------|----------|-------------|---------------|
+| POST | `/share/create` | Create a shareable link | Yes |
+| POST | `/share/accept/:shareId` | Accept a shared list | Yes |
+| DELETE | `/share/revoke/:shareId` | Revoke a share link | Yes |
+| GET | `/share/list/:listId` | Get all shares for a list | Yes |
+
+### WebSocket Events
+
+Connect to WebSocket at `ws://localhost:3000`
+
+**Events:**
+- `listUpdated` - Emitted when a list is modified
+- `itemAdded` - Emitted when an item is added
+- `itemUpdated` - Emitted when an item is updated
+- `itemRemoved` - Emitted when an item is removed
+
+## 📦 Postman Collection
+
+A complete Postman collection is included in the repository:
+- **File**: `Grocery-Management-API.postman_collection.json`
+- **Documentation**: See `POSTMAN_COLLECTION_README.md` for detailed usage instructions
+
+Import the collection into Postman to test all API endpoints with pre-configured requests and automated tests.
+
+## 🏗️ Project Structure
+
+```
+src/
+├── auth/                 # Authentication module
+│   ├── dto/             # Data transfer objects
+│   ├── guards/          # JWT and Local auth guards
+│   ├── strategies/      # Passport strategies
+│   └── auth.service.ts  # Authentication logic
+├── users/               # User management module
+│   ├── schemas/         # Mongoose schemas
+│   └── users.service.ts # User service logic
+├── lists/               # Grocery lists module
+│   ├── dto/             # DTOs for lists and items
+│   ├── schemas/         # List and item schemas
+│   └── lists.service.ts # List management logic
+├── share/               # Link sharing module
+│   ├── dto/             # Share DTOs
+│   ├── schemas/         # Share schema
+│   └── share.service.ts # Share logic
+├── events/              # WebSocket gateway
+│   └── events.gateway.ts
+└── main.ts              # Application entry point
+
+test/
+├── auth.e2e-spec.ts     # Auth E2E tests
+├── lists.e2e-spec.ts    # Lists E2E tests
+└── share.e2e-spec.ts    # Share E2E tests
+```
+
+## 🔧 Technologies Used
+
+- **Framework**: [NestJS](https://nestjs.com/) - Progressive Node.js framework
+- **Database**: [MongoDB](https://www.mongodb.com/) with [Mongoose](https://mongoosejs.com/)
+- **Authentication**: [Passport](http://www.passportjs.org/) with JWT strategy
+- **WebSockets**: [Socket.IO](https://socket.io/)
+- **Testing**: [Jest](https://jestjs.io/) with Supertest
+- **Validation**: class-validator & class-transformer
+- **Password Hashing**: bcryptjs
+
+## 🔐 Security Features
+
+- JWT-based authentication
+- Password hashing with bcrypt (10 salt rounds)
+- Protected routes with JWT guards
+- CORS configuration for secure cross-origin requests
+- Input validation using class-validator
+- Secure share link generation
+
+## 🚀 Deployment
+
+### Environment Variables for Production
+
+Ensure the following environment variables are set:
+
+```env
+NODE_ENV=production
+MONGODB_URI=<your-production-mongodb-uri>
+JWT_SECRET=<strong-random-secret>
+JWT_EXPIRATION=7d
+PORT=3000
+```
+
+### Build for Production
+
+```bash
+npm run build
+```
+
+The compiled output will be in the `dist/` directory.
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## 📝 License
+
+This project is licensed under the UNLICENSED license.
+
+## 👨‍💻 Author
+
+**Aaditya Rana**
+
+## 🐛 Known Issues
+
+None at the moment. Please report any issues on the GitHub repository.
+
+## 📞 Support
+
+For support, please open an issue on the GitHub repository or contact the maintainer.
+
+---
+
+**Happy Coding! 🎉**
