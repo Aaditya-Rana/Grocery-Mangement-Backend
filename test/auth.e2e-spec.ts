@@ -68,13 +68,24 @@ describe('Auth API (e2e)', () => {
         .expect(400);
     });
 
-    it('should fail with duplicate email', () => {
+    it('should fail with duplicate email', async () => {
+      // First, ensure the user exists
+      await request(app.getHttpServer())
+        .post('/auth/register')
+        .send({
+          email: 'duplicate@example.com',
+          password: 'password123',
+          name: 'Duplicate Test User',
+        })
+        .expect(201);
+
+      // Now try to register with the same email
       return request(app.getHttpServer())
         .post('/auth/register')
         .send({
-          email: 'test@example.com',
+          email: 'duplicate@example.com',
           password: 'password123',
-          name: 'Test User',
+          name: 'Duplicate Test User',
         })
         .expect(500); // Duplicate key error
     });
