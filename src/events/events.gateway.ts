@@ -19,12 +19,12 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
   server: Server;
 
-  handleConnection(client: Socket) {
-    console.log(`Client connected: ${client.id}`);
+  handleConnection() {
+    // Client connected
   }
 
-  handleDisconnect(client: Socket) {
-    console.log(`Client disconnected: ${client.id}`);
+  handleDisconnect() {
+    // Client disconnected
   }
 
   @SubscribeMessage('subscribe')
@@ -34,7 +34,6 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   ) {
     const room = `list_${data.listId}`;
     void client.join(room);
-    console.log(`Client ${client.id} subscribed to ${room}`);
     return { event: 'subscribed', data: { listId: data.listId } };
   }
 
@@ -45,7 +44,6 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   ) {
     const room = `list_${data.listId}`;
     void client.leave(room);
-    console.log(`Client ${client.id} unsubscribed from ${room}`);
     return { event: 'unsubscribed', data: { listId: data.listId } };
   }
 

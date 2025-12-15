@@ -195,9 +195,21 @@ describe('Lists API (e2e)', () => {
   });
 
   describe('PATCH /lists/:id/items/:itemId', () => {
-    it('should update an item status', () => {
+    it('should update an item status', async () => {
+      // Create a fresh item for this test to avoid conflicts
+      const itemResponse = await request(app.getHttpServer())
+        .post(`/lists/${listId}/items`)
+        .set('Authorization', `Bearer ${authToken}`)
+        .send({
+          name: 'Item to Update',
+          quantity: 1,
+          unit: 'piece',
+        });
+
+      const updateItemId = itemResponse.body._id;
+
       return request(app.getHttpServer())
-        .patch(`/lists/${listId}/items/${itemId}`)
+        .patch(`/lists/${listId}/items/${updateItemId}`)
         .set('Authorization', `Bearer ${authToken}`)
         .send({
           status: 'in_progress',
@@ -247,9 +259,19 @@ describe('Lists API (e2e)', () => {
   });
 
   describe('DELETE /lists/:id', () => {
-    it('should delete a list', () => {
+    it('should delete a list', async () => {
+      // Create a new list specifically for deletion to avoid affecting other tests
+      const listResponse = await request(app.getHttpServer())
+        .post('/lists')
+        .set('Authorization', `Bearer ${authToken}`)
+        .send({
+          name: 'List to Delete',
+        });
+
+      const deleteListId = listResponse.body._id;
+
       return request(app.getHttpServer())
-        .delete(`/lists/${listId}`)
+        .delete(`/lists/${deleteListId}`)
         .set('Authorization', `Bearer ${authToken}`)
         .expect(200);
     });
