@@ -1,5 +1,8 @@
 # Grocery Management Backend
 
+![CI](https://github.com/Aaditya-Rana/Grocery-Mangement-Backend/workflows/CI/badge.svg)
+[![License](https://img.shields.io/badge/license-UNLICENSED-blue.svg)](LICENSE)
+
 A robust NestJS-based backend API for managing grocery lists with real-time collaboration features, user authentication, and link-based sharing capabilities.
 
 ## 🚀 Features
@@ -91,9 +94,34 @@ npm run test:e2e
 npm run test:cov
 ```
 
-### Run Tests in Watch Mode
-```bash
 npm run test:watch
+```
+
+## 🔄 Continuous Integration
+
+This project uses GitHub Actions for automated testing and deployment. The CI pipeline runs on every push and pull request to ensure code quality.
+
+### Workflows
+
+- **CI Pipeline**: Runs linting, unit tests, E2E tests, and builds on every push/PR
+- **Dependency Check**: Weekly security audits and dependency reviews
+- **Release**: Automated releases when version tags are pushed
+
+### Status Checks
+
+All pull requests must pass the following checks:
+- ✅ ESLint and Prettier formatting
+- ✅ Unit tests with coverage
+- ✅ E2E tests with MongoDB
+- ✅ Successful build
+
+For detailed CI/CD documentation, see [.github/CICD_DOCUMENTATION.md](.github/CICD_DOCUMENTATION.md)
+
+### Running CI Checks Locally
+
+```bash
+# Run all CI checks locally
+npm run lint && npm run format -- --check && npm run test:cov && npm run build
 ```
 
 ## 📚 API Documentation

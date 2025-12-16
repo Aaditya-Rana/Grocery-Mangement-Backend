@@ -62,3 +62,6 @@ Grocery-Management-API.postman_collection.json
 #websocket testing
 verify-websocket.html
 FRONTEND_WEBSOCKET_GUIDE.md
+
+#.github files
+.github/workflows/SETUP_GUIDE.md
