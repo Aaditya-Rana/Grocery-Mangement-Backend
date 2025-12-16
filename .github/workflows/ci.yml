@@ -89,14 +89,14 @@ jobs:
 
       - name: Create test environment file
         run: |
-          echo "MONGODB_URI=mongodb://localhost:27017/grocery-test" > .env
+          echo "MONGO_URI=mongodb://localhost:27017/grocery-test" > .env
           echo "JWT_SECRET=test-secret-key-for-ci" >> .env
           echo "PORT=3000" >> .env
 
       - name: Run E2E tests
         run: npm run test:e2e
         env:
-          MONGODB_URI: mongodb://localhost:27017/grocery-test
+          MONGO_URI: mongodb://localhost:27017/grocery-test
           JWT_SECRET: test-secret-key-for-ci
           PORT: 3000
 

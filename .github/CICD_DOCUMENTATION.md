@@ -92,7 +92,7 @@ git push origin v1.0.0
 The CI workflows use the following environment variables:
 
 #### E2E Tests
-- `MONGODB_URI`: MongoDB connection string (set to `mongodb://localhost:27017/grocery-test` in CI)
+- `MONGO_URI`: MongoDB connection string (set to `mongodb://localhost:27017/grocery-test` in CI)
 - `JWT_SECRET`: Secret key for JWT tokens (set to `test-secret-key-for-ci` in CI)
 - `PORT`: Application port (set to `3000` in CI)
 
